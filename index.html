@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Open-Reflection Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f3ee;
+      --ink: #1a1814;
+      --ink-soft: #5a5650;
+      --ink-faint: #9a968f;
+      --accent: #c8492a;
+      --accent-light: #e8cfc7;
+      --rule: #d8d4cc;
+      --card: #ede9e2;
+      --white: #faf9f6;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      height: 60px;
+    }
+
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    .tab { display: none; padding-top: 60px; }
+    .tab.active { display: block; }
+
+    /* HERO */
+    .hero {
+      min-height: calc(100vh - 60px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 3rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 28px; height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 2rem;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+
+    .hero-body {
+      font-size: 1.02rem;
+      color: var(--ink-soft);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1.6rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--ink); color: var(--white); }
+    .btn.filled { background: var(--accent); color: var(--white); border-color: var(--accent); }
+    .btn.filled:hover { background: #a8391a; border-color: #a8391a; }
+
+    .hero-right { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      padding: 1.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--accent);
+    }
+    .stat-number {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .divider { border: none; border-top: 1px solid var(--rule); }
+
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 3rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    .pillar {
+      padding: 1.8rem;
+      border: 1px solid var(--rule);
+      background: var(--white);
+    }
+    .pillar-icon {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .pillar h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+    }
+    .pillar p { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7; }
+
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 2rem 3rem;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+    }
+
+    /* SAFETY NUDGES */
+    .sn-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 3rem 3rem;
+    }
+    .sn-hero h1 { font-size: clamp(2rem, 3.5vw, 3rem); margin-bottom: 1.5rem; }
+
+    .intro-text {
+      font-size: 1.02rem;
+      color: var(--ink-soft);
+      line-height: 1.85;
+      max-width: 720px;
+    }
+
+    .demo-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 3rem;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      margin-top: 2rem;
+    }
+
+    .demo-img {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mockup-bar {
+      width: 100%;
+      height: 26px;
+      background: #2a2825;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 10px;
+      position: absolute;
+      top: 0;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #febc2e; }
+    .dot.g { background: #28c840; }
+    .url-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.48rem;
+      color: #666;
+      margin-left: 8px;
+    }
+
+    .mockup-body {
+      position: absolute;
+      top: 26px; left: 0; right: 0; bottom: 0;
+      background: #1a1918;
+      padding: 14px 12px 12px;
+      overflow: hidden;
+    }
+
+    .mock-line {
+      height: 7px;
+      border-radius: 3px;
+      margin-bottom: 6px;
+      background: #2e2c29;
+    }
+    .mock-line.hl {
+      background: rgba(200, 73, 42, 0.28);
+      position: relative;
+    }
+
+    .nudge-badge {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.06em;
+      padding: 2px 6px;
+      border-radius: 2px;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    .mock-bubble {
+      margin-top: 8px;
+      background: rgba(200, 73, 42, 0.1);
+      border: 1px solid rgba(200, 73, 42, 0.35);
+      border-radius: 4px;
+      padding: 7px 9px;
+    }
+    .mock-bubble-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.5rem;
+      color: #c8492a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+    .mock-bubble-line {
+      height: 5px;
+      border-radius: 3px;
+      background: #2e2c29;
+      margin-bottom: 4px;
+    }
+
+    .demo-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: var(--ink);
+      color: var(--white);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.75rem;
+    }
+
+    .video-placeholder {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      aspect-ratio: 16/7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent, transparent 20px,
+        rgba(200,73,42,0.04) 20px, rgba(200,73,42,0.04) 21px
+      );
+    }
+    .play-btn {
+      width: 64px; height: 64px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--white);
+      position: relative;
+      z-index: 1;
+    }
+    .play-btn::after {
+      content: '';
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 10px 0 10px 18px;
+      border-color: transparent transparent transparent var(--ink);
+      margin-left: 4px;
+    }
+    .play-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .play-btn:hover::after { border-color: transparent transparent transparent var(--white); }
+    .video-label {
+      position: absolute;
+      bottom: 1.2rem; left: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .tech-card {
+      border: 1px solid var(--rule);
+      padding: 2rem;
+      background: var(--white);
+    }
+    .tech-card h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+    }
+    .tech-card p { font-size: 0.92rem; color: var(--ink-soft); line-height: 1.75; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--rule);
+      color: var(--ink-soft);
+      background: var(--bg);
+    }
+    .links-row { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
+
+    /* TEAM */
+    .team-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 3rem 3rem;
+    }
+    .team-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 3rem 4rem;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .team-grid.small {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+    }
+
+    .member { text-align: center; }
+
+    .avatar {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--card);
+      border: 1px solid var(--rule);
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-pattern { position: absolute; inset: 0; opacity: 0.18; }
+    .avatar-initials {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--ink-faint);
+      position: relative;
+      z-index: 1;
+    }
+    .member-name { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: 0.2rem; }
+    .member-role {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .member.small .avatar-initials { font-size: 1.4rem; }
+    .member.small .member-name { font-size: 0.88rem; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .hero { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
+      .hero-right { display: none; }
+      .two-col { grid-template-columns: 1fr; }
+      .pillars { grid-template-columns: 1fr; }
+      .demo-grid { grid-template-columns: 1fr; }
+      .tech-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-grid.small { grid-template-columns: repeat(3, 1fr); }
+      .section, .demo-section, .sn-hero, .team-hero, .team-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo" onclick="show('home')"><span>○</span> Open-Reflection</span>
+  <ul class="nav-links">
+    <li><a onclick="show('home')" class="active" id="nav-home">Home</a></li>
+    <li><a onclick="show('nudges')" id="nav-nudges">Safety Nudges</a></li>
+    <li><a onclick="show('team')" id="nav-team">Team</a></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<div class="tab active" id="tab-home">
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow">An Independent Research Initiative</div>
+      <h1>Fostering <em>mindful</em> human–AI interaction</h1>
+      <p class="hero-body">
+        The rapid rise in chatbot usage has transformed how people seek information, make decisions, and interact with technology. The Open-Reflection Project develops independent oversight mechanisms and user-facing interventions to help people engage with AI critically and safely.
+      </p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <button class="btn filled" onclick="show('nudges')">Explore Safety Nudges →</button>
+        <button class="btn" onclick="show('team')">Meet the Team</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-card">
+        <div class="stat-number">01</div>
+        <div class="stat-label">Tool Released — Safety Nudges</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Open-Source &amp; Free to Use</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">6+</div>
+        <div class="stat-label">Harm Categories Audited in Real Time</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="section">
+    <div class="section-label">The Problem We Address</div>
+    <div class="two-col">
+      <div>
+        <h2>AI is powerful. Oversight is essential.</h2>
+      </div>
+      <div>
+        <p style="color:var(--ink-soft);line-height:1.85;font-size:1rem;">
+          The rapid rise in chatbot usage has transformed how people seek information, make decisions, and interact with technology—spanning applications from everyday queries to sensitive personal and professional contexts. Alongside these benefits, a growing body of research and real-life incidents highlight emerging risks, including overreliance on automated systems, excessive use, persuasive influence, social isolation, and inflated user trust driven by overly agreeable or sycophantic responses.
+        </p>
+        <p style="color:var(--ink-soft);line-height:1.85;font-size:1rem;margin-top:1rem;">
+          These concerns are particularly pronounced among vulnerable populations such as children and older adults. Together, these trends underscore the need for independent oversight mechanisms and user-facing interventions that help users better understand and critically engage with AI systems.
+        </p>
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-icon">01 — Transparency</div>
+        <h3>Surface hidden patterns</h3>
+        <p>Make subtle interaction dynamics—flattery, overconfidence, anthropomorphization—visible to users in real time.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">02 — Agency</div>
+        <h3>Restore user autonomy</h3>
+        <p>Prompt reflection at the moment of use to support more mindful, self-directed engagement with AI systems.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">03 — Literacy</div>
+        <h3>Build AI understanding</h3>
+        <p>Increase awareness of AI limitations and biases, especially for users who may otherwise remain unaware.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">04 — Open Research</div>
+        <h3>Independent oversight</h3>
+        <p>Develop tools and publish findings openly, free from commercial incentives that may conflict with user welfare.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Built in the public interest</footer>
+</div>
+
+<!-- SAFETY NUDGES -->
+<div class="tab" id="tab-nudges">
+  <div class="sn-hero">
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;">
+      <span style="display:inline-block;width:28px;height:1px;background:var(--accent);"></span>
+      Tool 01 — Open-Reflection Project
+    </div>
+    <h1>Safety <em>Nudges</em></h1>
+    <p class="intro-text" style="margin-bottom:1.2rem;">
+      Our first tool under the Open-Reflection Project is Safety Nudges, a lightweight intervention designed to promote awareness and reflection during chatbot interactions. Safety Nudges provides contextual, real-time flags that encourage users to question AI-generated responses and recognize potential limitations, biases, or risks.
+    </p>
+    <p class="intro-text" style="margin-bottom:1.2rem;">
+      Implemented as a Chrome extension, the tool audits each conversation turn in systems like ChatGPT and Claude by sending responses to an external language model for review. Using a principled taxonomy of harms, it identifies patterns such as overconfidence, flattery, and anthropomorphization, surfacing these signals to users in a clear and unobtrusive way.
+    </p>
+    <p class="intro-text">
+      While the auditing process itself relies on AI—and therefore shares some inherent limitations—it functions as a complementary "second pair of eyes" that helps mitigate risk in real time. The overarching goal of Safety Nudges is to restore user agency and foster AI literacy by making otherwise subtle interaction patterns visible. By prompting reflection at the moment of use, the tool aims to support more mindful engagement, act as a deterrent in high-risk scenarios, and increase awareness among users who may otherwise remain unaware of these dynamics.
+    </p>
+  </div>
+
+  <div class="demo-section">
+    <div class="section-label">Demo &amp; Screenshots</div>
+
+    <div class="demo-grid">
+      <!-- Mockup 1 -->
+      <div class="demo-img">
+        <div class="mockup-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span class="url-text">chatgpt.com</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mock-line" style="width:82%"></div>
+          <div class="mock-line" style="width:95%"></div>
+          <div class="mock-line hl" style="width:90%;position:relative;">
+            <div class="nudge-badge">⚑ Flattery</div>
+          </div>
+          <div class="mock-line" style="width:68%"></div>
+          <div class="mock-bubble">
+            <div class="mock-bubble-title">Safety Nudge Detected</div>
+            <div class="mock-bubble-line" style="width:100%"></div>
+            <div class="mock-bubble-line" style="width:78%"></div>
+            <div class="mock-bubble-line" style="width:55%"></div>
+          </div>
+        </div>
+        <div class="demo-caption">Flattery Detection</div>
+      </div>
+
+      <!-- Mockup 2 -->
+      <div class="demo-img">
+        <div class="mockup-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span class="url-text">claude.ai</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mock-line" style="width:60%"></div>
+          <div class="mock-line hl" style="width:100%;position:relative;">
+            <div class="nudge-badge">⚑ Overconfidence</div>
+          </div>
+          <div class="mock-line hl" style="width:84%;"></div>
+          <div class="mock-line" style="width:72%"></div>
+          <div class="mock-bubble">
+            <div class="mock-bubble-title">Safety Nudge Detected</div>
+            <div class="mock-bubble-line" style="width:100%"></div>
+            <div class="mock-bubble-line" style="width:65%"></div>
+          </div>
+        </div>
+        <div class="demo-caption">Overconfidence Flag</div>
+      </div>
+
+      <!-- Mockup 3 -->
+      <div class="demo-img">
+        <div class="mockup-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span class="url-text">chatgpt.com</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mock-line" style="width:88%"></div>
+          <div class="mock-line" style="width:50%"></div>
+          <div class="mock-line hl" style="width:92%;position:relative;">
+            <div class="nudge-badge">⚑ Anthropomorphic</div>
+          </div>
+          <div class="mock-line" style="width:63%"></div>
+          <div class="mock-bubble">
+            <div class="mock-bubble-title">Safety Nudge Detected</div>
+            <div class="mock-bubble-line" style="width:100%"></div>
+            <div class="mock-bubble-line" style="width:82%"></div>
+            <div class="mock-bubble-line" style="width:50%"></div>
+          </div>
+        </div>
+        <div class="demo-caption">Anthropomorphization Alert</div>
+      </div>
+    </div>
+
+    <div class="video-placeholder">
+      <div class="play-btn"></div>
+      <div class="video-label">Demo Video — Coming Soon</div>
+    </div>
+  </div>
+
+  <div class="demo-section" style="padding-top:1rem;padding-bottom:4rem;">
+    <div class="section-label">How It Was Built</div>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h3>Architecture</h3>
+        <p>Safety Nudges runs as a Chrome extension that intercepts AI chatbot conversations in real time. Each assistant response is captured and forwarded to an external LLM auditor, which evaluates it against a structured harm taxonomy before returning a verdict to the user's browser.</p>
+        <div class="tag-row">
+          <span class="tag">Chrome Extension MV3</span>
+          <span class="tag">Content Script</span>
+          <span class="tag">Background Worker</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <h3>Harm Taxonomy</h3>
+        <p>The auditor uses a principled, research-grounded taxonomy covering six categories: sycophancy and flattery, overconfidence and false certainty, anthropomorphization, persuasive manipulation, risk minimization, and context insensitivity.</p>
+        <div class="tag-row">
+          <span class="tag">Sycophancy</span>
+          <span class="tag">Overconfidence</span>
+          <span class="tag">Anthropomorphic</span>
+          <span class="tag">Persuasion</span>
+          <span class="tag">Risk Minimization</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <h3>LLM Auditing Pipeline</h3>
+        <p>Each chatbot response is embedded in a structured audit prompt and sent to a capable external language model. The auditor returns a structured JSON verdict indicating which harm categories, if any, were detected—surfaced inline as unobtrusive badges and expandable explanations.</p>
+        <div class="tag-row">
+          <span class="tag">Structured Prompting</span>
+          <span class="tag">JSON Output</span>
+          <span class="tag">Real-Time Audit</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <h3>Design Principles</h3>
+        <p>The tool is designed to be lightweight, non-disruptive, and transparent about its own limitations. Nudges appear only when warranted and are framed as prompts for reflection rather than definitive judgments. The extension is open-source and requires no persistent data collection.</p>
+        <div class="tag-row">
+          <span class="tag">Privacy-Preserving</span>
+          <span class="tag">Open Source</span>
+          <span class="tag">Non-Intrusive UI</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="links-row">
+      <a class="btn filled" href="https://github.com" target="_blank">GitHub Repository →</a>
+      <a class="btn" href="https://chrome.google.com/webstore" target="_blank">Chrome Extension →</a>
+    </div>
+  </div>
+
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Built in the public interest</footer>
+</div>
+
+<!-- TEAM -->
+<div class="tab" id="tab-team">
+  <div class="team-hero">
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;">
+      <span style="display:inline-block;width:28px;height:1px;background:var(--accent);"></span>
+      The People
+    </div>
+    <h1>Our <em>Team</em></h1>
+    <p class="intro-text">
+      The Open-Reflection Project is an independent research initiative. Our team spans expertise in human–computer interaction, AI safety, cognitive science, and software engineering—united by a commitment to building AI that serves users, not the other way around.
+    </p>
+  </div>
+
+  <div class="team-section">
+    <div class="section-label">Core Team</div>
+    <div class="team-grid">
+
+      <div class="member">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="0" x2="100" y2="100" stroke="#c8492a" stroke-width="1"/>
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#c8492a" stroke-width="1"/>
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#c8492a" stroke-width="1"/>
+            <circle cx="50" cy="50" r="28" fill="none" stroke="#c8492a" stroke-width="1"/>
+          </svg>
+          <div class="avatar-initials">AK</div>
+        </div>
+        <div class="member-name">Dr. Anika Kruse</div>
+        <div class="member-role">Principal Investigator</div>
+      </div>
+
+      <div class="member">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="15" width="70" height="70" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <rect x="30" y="30" width="40" height="40" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <line x1="0" y1="100" x2="100" y2="0" stroke="#c8492a" stroke-width="1"/>
+          </svg>
+          <div class="avatar-initials">MO</div>
+        </div>
+        <div class="member-name">Marcus Osei</div>
+        <div class="member-role">Lead Engineer</div>
+      </div>
+
+      <div class="member">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <circle cx="50" cy="50" r="18" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <line x1="12" y1="50" x2="88" y2="50" stroke="#c8492a" stroke-width="1"/>
+            <line x1="50" y1="12" x2="50" y2="88" stroke="#c8492a" stroke-width="1"/>
+          </svg>
+          <div class="avatar-initials">SR</div>
+        </div>
+        <div class="member-name">Dr. Simone Rau</div>
+        <div class="member-role">HCI Research Lead</div>
+      </div>
+
+      <div class="member">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,8 92,82 8,82" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <polygon points="50,28 75,72 25,72" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <line x1="50" y1="8" x2="50" y2="82" stroke="#c8492a" stroke-width="0.7"/>
+          </svg>
+          <div class="avatar-initials">JP</div>
+        </div>
+        <div class="member-name">James Park</div>
+        <div class="member-role">AI Safety Researcher</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="team-section" style="padding-top:0;">
+    <div class="section-label">Other Team Members</div>
+    <div class="team-grid small">
+
+      <div class="member small">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="25" x2="100" y2="25" stroke="#c8492a" stroke-width="1"/>
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#c8492a" stroke-width="1"/>
+            <line x1="0" y1="75" x2="100" y2="75" stroke="#c8492a" stroke-width="1"/>
+          </svg>
+          <div class="avatar-initials">FN</div>
+        </div>
+        <div class="member-name">Fatima Naji</div>
+        <div class="member-role">UX Designer</div>
+      </div>
+
+      <div class="member small">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="25" cy="25" r="14" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <circle cx="75" cy="75" r="14" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <line x1="25" y1="25" x2="75" y2="75" stroke="#c8492a" stroke-width="1"/>
+          </svg>
+          <div class="avatar-initials">TL</div>
+        </div>
+        <div class="member-name">Tom Leung</div>
+        <div class="member-role">Research Engineer</div>
+      </div>
+
+      <div class="member small">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="8" width="38" height="38" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <rect x="54" y="54" width="38" height="38" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <line x1="8" y1="54" x2="46" y2="92" stroke="#c8492a" stroke-width="0.7"/>
+          </svg>
+          <div class="avatar-initials">EV</div>
+        </div>
+        <div class="member-name">Elena Vasquez</div>
+        <div class="member-role">Cognitive Scientist</div>
+      </div>
+
+      <div class="member small">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="50" rx="40" ry="18" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <ellipse cx="50" cy="50" rx="18" ry="40" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <circle cx="50" cy="50" r="5" fill="#c8492a" opacity="0.4"/>
+          </svg>
+          <div class="avatar-initials">RB</div>
+        </div>
+        <div class="member-name">Rohan Bhat</div>
+        <div class="member-role">NLP Researcher</div>
+      </div>
+
+      <div class="member small">
+        <div class="avatar">
+          <svg class="avatar-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#c8492a" stroke-width="1"/>
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#c8492a" stroke-width="1"/>
+            <circle cx="50" cy="50" r="12" fill="none" stroke="#c8492a" stroke-width="1"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="#c8492a" stroke-width="0.6"/>
+          </svg>
+          <div class="avatar-initials">CW</div>
+        </div>
+        <div class="member-name">Clara Wu</div>
+        <div class="member-role">Ethics Advisor</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Built in the public interest</footer>
+</div>
+
+<script>
+  function show(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('nav-' + tab).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
