@@ -373,6 +373,21 @@
       font-size: 1.2rem;
       cursor: pointer;
     }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      border: 1px solid rgba(251, 252, 250, 0.22);
+      background: rgba(24, 33, 38, 0.78);
+      color: var(--white);
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .lightbox-nav.prev { left: 0.9rem; }
+    .lightbox-nav.next { right: 0.9rem; }
 
     .video-placeholder {
       background: var(--card);
@@ -1195,6 +1210,8 @@
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <div class="lightbox-backdrop" data-close-lightbox></div>
+  <button class="lightbox-nav prev" type="button" aria-label="Previous screenshot" id="lightbox-prev">‹</button>
+  <button class="lightbox-nav next" type="button" aria-label="Next screenshot" id="lightbox-next">›</button>
   <figure class="lightbox-figure">
     <button class="lightbox-close" type="button" aria-label="Close screenshot viewer" data-close-lightbox>×</button>
     <img class="lightbox-image" id="lightbox-image" alt="">
@@ -1214,11 +1231,22 @@
   const lightbox = document.getElementById('lightbox');
   const lightboxImage = document.getElementById('lightbox-image');
   const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightboxPrev = document.getElementById('lightbox-prev');
+  const lightboxNext = document.getElementById('lightbox-next');
+  const galleryItems = Array.from(document.querySelectorAll('.demo-img'));
+  let activeGalleryIndex = 0;
 
-  function openLightbox(src, alt, caption) {
-    lightboxImage.src = src;
-    lightboxImage.alt = alt;
-    lightboxCaption.textContent = caption;
+  function renderLightbox(index) {
+    activeGalleryIndex = (index + galleryItems.length) % galleryItems.length;
+    const item = galleryItems[activeGalleryIndex];
+    const image = item.querySelector('.demo-thumb');
+    lightboxImage.src = item.dataset.lightboxSrc;
+    lightboxImage.alt = image.alt;
+    lightboxCaption.textContent = item.dataset.lightboxCaption;
+  }
+
+  function openLightbox(index) {
+    renderLightbox(index);
     lightbox.classList.add('open');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -1233,8 +1261,7 @@
 
   document.querySelectorAll('.demo-img').forEach((button) => {
     button.addEventListener('click', () => {
-      const image = button.querySelector('.demo-thumb');
-      openLightbox(button.dataset.lightboxSrc, image.alt, button.dataset.lightboxCaption);
+      openLightbox(galleryItems.indexOf(button));
     });
   });
 
@@ -1242,9 +1269,22 @@
     element.addEventListener('click', closeLightbox);
   });
 
+  lightboxPrev.addEventListener('click', () => {
+    renderLightbox(activeGalleryIndex - 1);
+  });
+
+  lightboxNext.addEventListener('click', () => {
+    renderLightbox(activeGalleryIndex + 1);
+  });
+
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && lightbox.classList.contains('open')) {
+    if (!lightbox.classList.contains('open')) return;
+    if (event.key === 'Escape') {
       closeLightbox();
+    } else if (event.key === 'ArrowLeft') {
+      renderLightbox(activeGalleryIndex - 1);
+    } else if (event.key === 'ArrowRight') {
+      renderLightbox(activeGalleryIndex + 1);
     }
   });
 </script>
