@@ -137,7 +137,7 @@
     }
     .btn:hover { background: var(--ink); color: var(--white); }
     .btn.filled { background: var(--accent); color: var(--white); border-color: var(--accent); }
-    .btn.filled:hover { background: #a8391a; border-color: #a8391a; }
+    .btn.filled:hover { background: var(--ink); border-color: var(--ink); color: var(--white); }
 
     .hero-right { display: flex; flex-direction: column; gap: 1.2rem; }
 
@@ -285,20 +285,58 @@
       padding: 2rem 3rem;
     }
 
-    .demo-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.2rem;
+    .demo-carousel {
+      position: relative;
       margin-top: 2rem;
+    }
+    .demo-track {
+      display: flex;
+      gap: 1.2rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding-bottom: 0.75rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-light) transparent;
+    }
+    .demo-track::-webkit-scrollbar {
+      height: 10px;
+    }
+    .demo-track::-webkit-scrollbar-thumb {
+      background: var(--accent-light);
+      border-radius: 999px;
+    }
+    .demo-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .demo-control {
+      width: 2.75rem;
+      height: 2.75rem;
+      border: 1px solid var(--rule);
+      background: var(--white);
+      color: var(--ink);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .demo-control:hover {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--white);
     }
 
     .demo-img {
       background: var(--card);
       border: 1px solid var(--rule);
-      aspect-ratio: 4/3;
+      aspect-ratio: 16/10;
       position: relative;
       overflow: hidden;
       cursor: zoom-in;
+      flex: 0 0 min(82vw, 760px);
+      scroll-snap-align: start;
     }
     .demo-thumb {
       width: 100%;
@@ -389,58 +427,24 @@
     .lightbox-nav.prev { left: 0.9rem; }
     .lightbox-nav.next { right: 0.9rem; }
 
-    .video-placeholder {
-      background: var(--card);
+    .demo-video {
+      width: 100%;
+      display: block;
       border: 1px solid var(--rule);
-      aspect-ratio: 16/7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: var(--card);
+      aspect-ratio: 16/9;
       margin-top: 1.5rem;
-      position: relative;
-      overflow: hidden;
+      object-fit: contain;
     }
-    .video-placeholder::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        45deg,
-        transparent, transparent 20px,
-        rgba(200,73,42,0.04) 20px, rgba(200,73,42,0.04) 21px
-      );
+    .member-name a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
     }
-    .play-btn {
-      width: 64px; height: 64px;
-      border: 2px solid var(--ink);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: var(--white);
-      position: relative;
-      z-index: 1;
-    }
-    .play-btn::after {
-      content: '';
-      width: 0; height: 0;
-      border-style: solid;
-      border-width: 10px 0 10px 18px;
-      border-color: transparent transparent transparent var(--ink);
-      margin-left: 4px;
-    }
-    .play-btn:hover { background: var(--accent); border-color: var(--accent); }
-    .play-btn:hover::after { border-color: transparent transparent transparent var(--white); }
-    .video-label {
-      position: absolute;
-      bottom: 1.2rem; left: 1.5rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
+    .member-name a:hover {
+      color: var(--accent);
+      border-color: currentColor;
     }
 
     .tech-grid {
@@ -611,13 +615,13 @@
       .hero-right { display: none; }
       .two-col { grid-template-columns: 1fr; }
       .pillars { grid-template-columns: 1fr; }
-      .demo-grid { grid-template-columns: 1fr; }
       .tech-grid { grid-template-columns: 1fr; }
       .sn-title { align-items: flex-start; }
       .sn-logo { width: 60px; height: 60px; border-radius: 15px; }
       .team-grid { grid-template-columns: repeat(2, 1fr); }
       .team-grid.small { grid-template-columns: repeat(3, 1fr); }
       .section, .demo-section, .sn-hero, .team-hero, .team-section, .taxonomy-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .demo-img { flex-basis: 100%; }
     }
   </style>
 </head>
@@ -718,6 +722,48 @@
       <img class="sn-logo" src="assets/safety_nudges.png" alt="Safety Nudges logo">
       <h1>Safety <em>Nudges</em></h1>
     </div>
+  </div>
+
+  <div class="demo-section">
+    <div class="section-label">Demo &amp; Screenshots</div>
+
+    <div class="demo-carousel">
+      <div class="demo-track" id="demo-track">
+        <button class="demo-img" type="button" data-lightbox-src="assets/screenshot1.png" data-lightbox-caption="Anthropomorphizing">
+          <img class="demo-thumb" src="assets/screenshot1.png" alt="Safety Nudges screenshot showing an anthropomorphization alert in ChatGPT">
+          <div class="demo-caption">Anthropomorphizing</div>
+        </button>
+
+        <button class="demo-img" type="button" data-lightbox-src="assets/screenshot2.png" data-lightbox-caption="Private Information">
+          <img class="demo-thumb" src="assets/screenshot2.png" alt="Safety Nudges screenshot showing a private information warning in ChatGPT">
+          <div class="demo-caption">Private Information</div>
+        </button>
+
+        <button class="demo-img" type="button" data-lightbox-src="assets/screenshot3.png" data-lightbox-caption="Health or Legal Reliance">
+          <img class="demo-thumb" src="assets/screenshot3.png" alt="Safety Nudges screenshot showing a health or legal reliance warning in ChatGPT">
+          <div class="demo-caption">Health or Legal Reliance</div>
+        </button>
+      </div>
+      <div class="demo-controls" aria-label="Demo carousel controls">
+        <button class="demo-control" type="button" id="demo-prev" aria-label="Previous demo">‹</button>
+        <button class="demo-control" type="button" id="demo-next" aria-label="Next demo">›</button>
+      </div>
+    </div>
+
+    <video class="demo-video" controls playsinline preload="metadata">
+      <source src="assets/demo-video.mp4" type="video/mp4">
+      <source src="assets/demo-video.mov" type="video/quicktime">
+      Your browser does not support the demo video.
+    </video>
+
+    <div class="links-row" style="margin-top:1.5rem;">
+      <a class="btn filled" href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub Repository →</a>
+      <a class="btn" href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension →</a>
+    </div>
+  </div>
+
+  <div class="demo-section" style="padding-top:1rem;">
+    <div class="section-label">About Safety Nudges</div>
     <p class="intro-text" style="margin-bottom:1.2rem;">
       Our first tool under the Open-Reflection Project is Safety Nudges, a lightweight intervention designed to promote awareness and reflection during chatbot interactions. Safety Nudges provides contextual, real-time flags that encourage users to question AI-generated responses and recognize potential limitations, biases, or risks.
     </p>
@@ -727,32 +773,6 @@
     <p class="intro-text">
       While the auditing process itself relies on AI—and therefore shares some inherent limitations—it functions as a complementary "second pair of eyes" that helps mitigate risk in real time. The overarching goal of Safety Nudges is to restore user agency and foster AI literacy by making otherwise subtle interaction patterns visible. By prompting reflection at the moment of use, the tool aims to support more mindful engagement, act as a deterrent in high-risk scenarios, and increase awareness among users who may otherwise remain unaware of these dynamics.
     </p>
-  </div>
-
-  <div class="demo-section">
-    <div class="section-label">Demo &amp; Screenshots</div>
-
-    <div class="demo-grid">
-      <button class="demo-img" type="button" data-lightbox-src="assets/screenshot1.png" data-lightbox-caption="Anthropomorphizing">
-        <img class="demo-thumb" src="assets/screenshot1.png" alt="Safety Nudges screenshot showing an anthropomorphization alert in ChatGPT">
-        <div class="demo-caption">Anthropomorphizing</div>
-      </button>
-
-      <button class="demo-img" type="button" data-lightbox-src="assets/screenshot2.png" data-lightbox-caption="Private Information">
-        <img class="demo-thumb" src="assets/screenshot2.png" alt="Safety Nudges screenshot showing a private information warning in ChatGPT">
-        <div class="demo-caption">Private Information</div>
-      </button>
-
-      <button class="demo-img" type="button" data-lightbox-src="assets/screenshot3.png" data-lightbox-caption="Health or Legal Reliance">
-        <img class="demo-thumb" src="assets/screenshot3.png" alt="Safety Nudges screenshot showing a health or legal reliance warning in ChatGPT">
-        <div class="demo-caption">Health or Legal Reliance</div>
-      </button>
-    </div>
-
-    <div class="video-placeholder">
-      <div class="play-btn"></div>
-      <div class="video-label">Demo Video — Coming Soon</div>
-    </div>
   </div>
 
   <div class="demo-section" style="padding-top:1rem;padding-bottom:4rem;">
@@ -797,11 +817,6 @@
           <span class="tag">Non-Intrusive UI</span>
         </div>
       </div>
-    </div>
-
-    <div class="links-row">
-      <a class="btn filled" href="https://github.com/jtbwedgwood/safety-nudges" target="_blank">GitHub Repository →</a>
-      <a class="btn" href="https://chrome.google.com/webstore" target="_blank">Chrome Extension →</a>
     </div>
   </div>
 
@@ -1150,7 +1165,7 @@
         <div class="avatar">
           <img src="assets/chhavi.jpg" alt="Portrait of Dr. Chhavi Yadav">
         </div>
-        <div class="member-name">Dr. Chhavi Yadav</div>
+        <div class="member-name"><a href="https://www.chhaviyadav.org/" target="_blank" rel="noreferrer">Dr. Chhavi Yadav</a></div>
         <div class="member-role">Postdoctoral Researcher, CMU, UC Berkeley</div>
       </div>
 
@@ -1158,7 +1173,7 @@
         <div class="avatar">
           <img src="assets/james.jpeg" alt="Portrait of James Wedgwood">
         </div>
-        <div class="member-name">James Wedgwood</div>
+        <div class="member-name"><a href="https://www.linkedin.com/in/james-wedgwood-a97592157/" target="_blank" rel="noreferrer">James Wedgwood</a></div>
         <div class="member-role">Student, CMU</div>
       </div>
 
@@ -1166,7 +1181,7 @@
         <div class="avatar">
           <img src="assets/virginia.jpeg" alt="Portrait of Prof. Virginia Smith">
         </div>
-        <div class="member-name">Prof. Virginia Smith</div>
+        <div class="member-name"><a href="https://www.cs.cmu.edu/~smithv/" target="_blank" rel="noreferrer">Prof. Virginia Smith</a></div>
         <div class="member-role">Professor, CMU MLD</div>
       </div>
 
@@ -1175,7 +1190,7 @@
   </div>
 
   <div class="team-section" style="padding-top:0;">
-    <div class="section-label">Other Team Members</div>
+    <div class="section-label">Additional Team Members</div>
     <div class="team-grid small">
 
       <div class="member small">
@@ -1233,8 +1248,18 @@
   const lightboxCaption = document.getElementById('lightbox-caption');
   const lightboxPrev = document.getElementById('lightbox-prev');
   const lightboxNext = document.getElementById('lightbox-next');
+  const demoTrack = document.getElementById('demo-track');
+  const demoPrev = document.getElementById('demo-prev');
+  const demoNext = document.getElementById('demo-next');
   const galleryItems = Array.from(document.querySelectorAll('.demo-img'));
   let activeGalleryIndex = 0;
+
+  function scrollDemoTrack(direction) {
+    if (!demoTrack || galleryItems.length === 0) return;
+    const cardWidth = galleryItems[0].getBoundingClientRect().width;
+    const gap = 19;
+    demoTrack.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+  }
 
   function renderLightbox(index) {
     activeGalleryIndex = (index + galleryItems.length) % galleryItems.length;
@@ -1276,6 +1301,11 @@
   lightboxNext.addEventListener('click', () => {
     renderLightbox(activeGalleryIndex + 1);
   });
+
+  if (demoPrev && demoNext) {
+    demoPrev.addEventListener('click', () => scrollDemoTrack(-1));
+    demoNext.addEventListener('click', () => scrollDemoTrack(1));
+  }
 
   document.addEventListener('keydown', (event) => {
     if (!lightbox.classList.contains('open')) return;
