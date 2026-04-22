@@ -11,7 +11,7 @@
       --bg: #f3f5f2;
       --ink: #182126;
       --ink-soft: #53616a;
-      --ink-faint: #8a979f;
+      --ink-faint: #6b7b84;
       --accent: #1f6f78;
       --accent-light: #cfe3e1;
       --rule: #d7dfdb;
@@ -56,7 +56,8 @@
     }
     .nav-logo span { color: var(--accent); }
 
-    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+    @media (max-width: 768px) { .nav-external { display: none; } }
     .nav-links a {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
@@ -123,9 +124,9 @@
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      padding: 0.75rem 1.6rem;
+      padding: 0.85rem 1.8rem;
       font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       text-decoration: none;
@@ -136,7 +137,7 @@
       transition: all 0.2s;
     }
     .btn:hover { background: var(--ink); color: var(--white); }
-    .btn.filled { background: var(--accent); color: var(--white); border-color: var(--accent); }
+    .btn.filled { background: var(--accent); color: var(--white); border-color: var(--accent); font-weight: 500; }
     .btn.filled:hover { background: var(--ink); border-color: var(--ink); color: var(--white); }
 
     .hero-right { display: flex; flex-direction: column; gap: 1.2rem; }
@@ -168,6 +169,26 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--ink-faint);
+      font-weight: 500;
+    }
+
+    .stat-card-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .stat-card-link:hover .stat-card {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .stat-card-link:focus-visible .stat-card {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .stat-card-link:hover .stat-label::after {
+      content: ' →';
     }
 
     .divider { border: none; border-top: 1px solid var(--rule); }
@@ -184,6 +205,7 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--ink-faint);
+      font-weight: 500;
       margin-bottom: 3rem;
       display: flex;
       align-items: center;
@@ -237,6 +259,14 @@
     }
     .pillar p { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7; }
 
+    .nav-divider {
+      width: 1px;
+      height: 1rem;
+      background: var(--rule);
+      margin: 0 0.25rem;
+      list-style: none;
+    }
+
     footer {
       border-top: 1px solid var(--rule);
       padding: 2rem 3rem;
@@ -247,6 +277,8 @@
       color: var(--ink-faint);
       text-transform: uppercase;
     }
+    footer a { color: var(--ink-soft); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
 
     /* SAFETY NUDGES */
     .sn-hero {
@@ -633,6 +665,10 @@
     <li><a onclick="show('home')" class="active" id="nav-home">Home</a></li>
     <li><a onclick="show('nudges')" id="nav-nudges">Safety Nudges</a></li>
     <li><a onclick="show('team')" id="nav-team">Team</a></li>
+    <li class="nav-divider nav-external" aria-hidden="true"></li>
+    <li class="nav-external"><a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a></li>
+    <li class="nav-external"><a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Install</a></li>
+    <li class="nav-external"><a href="mailto:[CONTACT EMAIL]">Contact</a></li>
   </ul>
 </nav>
 
@@ -651,18 +687,24 @@
       </div>
     </div>
     <div class="hero-right">
-      <div class="stat-card">
-        <div class="stat-number">01</div>
-        <div class="stat-label">Tool Released — Safety Nudges</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">∞</div>
-        <div class="stat-label">Open-Source &amp; Free to Use</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">14+</div>
-        <div class="stat-label">Harm Categories Audited in Real Time</div>
-      </div>
+      <a class="stat-card-link" onclick="show('nudges'); return false;" href="#safety-nudges" role="button">
+        <div class="stat-card">
+          <div class="stat-number">01</div>
+          <div class="stat-label">Tool Released — Safety Nudges</div>
+        </div>
+      </a>
+      <a class="stat-card-link" href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">
+        <div class="stat-card">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Open-Source &amp; Free to Use</div>
+        </div>
+      </a>
+      <a class="stat-card-link" onclick="show('nudges'); setTimeout(function(){ var el = document.querySelector('.taxonomy-section'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 150); return false;" href="#taxonomy" role="button">
+        <div class="stat-card">
+          <div class="stat-number">14+</div>
+          <div class="stat-label">Harm Categories Audited in Real Time</div>
+        </div>
+      </a>
     </div>
   </section>
 
@@ -675,12 +717,12 @@
         <h2>AI is powerful. Oversight is essential.</h2>
       </div>
       <div>
-        <p style="color:var(--ink-soft);line-height:1.85;font-size:1rem;">
-          The rapid rise in chatbot usage has transformed how people seek information, make decisions, and interact with technology—spanning applications from everyday queries to sensitive personal and professional contexts. Alongside these benefits, a growing body of research and real-life incidents highlight emerging risks, including overreliance on automated systems, excessive use, persuasive influence, social isolation, and inflated user trust driven by overly agreeable or sycophantic responses.
-        </p>
-        <p style="color:var(--ink-soft);line-height:1.85;font-size:1rem;margin-top:1rem;">
-          These concerns are particularly pronounced among vulnerable populations such as children and older adults. Together, these trends underscore the need for independent oversight mechanisms and user-facing interventions that help users better understand and critically engage with AI systems.
-        </p>
+        <ul style="color:var(--ink-soft);line-height:1.85;font-size:1rem;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.6rem;margin:0;">
+          <li>AI chatbot use is surging across sensitive personal and professional contexts — from everyday queries to medical, legal, and emotional support.</li>
+          <li>Emerging risks include overreliance, persuasive influence, social isolation, and sycophantic responses that inflate user trust.</li>
+          <li>Vulnerable populations — including children and older adults — face disproportionate harm from these dynamics.</li>
+          <li>A growing body of research calls for independent oversight mechanisms and interventions that help users engage with AI critically.</li>
+        </ul>
       </div>
     </div>
 
@@ -708,7 +750,7 @@
     </div>
   </section>
 
-  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Built in the public interest</footer>
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
 </div>
 
 <!-- SAFETY NUDGES -->
@@ -1141,7 +1183,7 @@
     </div>
   </div>
 
-  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Built in the public interest</footer>
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
 </div>
 
 <!-- TEAM -->
@@ -1220,7 +1262,7 @@
     </div>
   </div>
 
-  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Built in the public interest</footer>
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
 </div>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
