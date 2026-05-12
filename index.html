@@ -58,7 +58,8 @@
 
     .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
     @media (max-width: 768px) { .nav-external { display: none; } }
-    .nav-links a {
+    .nav-links a,
+    .nav-dropdown-trigger {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
       letter-spacing: 0.1em;
@@ -68,7 +69,49 @@
       cursor: pointer;
       transition: color 0.2s;
     }
-    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-links a:hover,
+    .nav-links a.active,
+    .nav-dropdown:hover .nav-dropdown-trigger,
+    .nav-dropdown:focus-within .nav-dropdown-trigger,
+    .nav-dropdown-trigger.active { color: var(--accent); }
+    .nav-dropdown {
+      position: relative;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+    .nav-dropdown-trigger {
+      border: 0;
+      background: transparent;
+      padding: 0;
+    }
+    .nav-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 170px;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      padding: 0.55rem 0;
+      border: 1px solid var(--rule);
+      background: var(--white);
+      box-shadow: 0 18px 40px rgba(24, 33, 38, 0.08);
+    }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown:focus-within .nav-dropdown-menu {
+      display: flex;
+    }
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.55rem 0.85rem;
+      white-space: nowrap;
+    }
+    .nav-dropdown-menu a:hover,
+    .nav-dropdown-menu a.active {
+      background: var(--card);
+    }
 
     .tab { display: none; padding-top: 60px; }
     .tab.active { display: block; }
@@ -304,6 +347,13 @@
     }
     .sn-hero h1 { font-size: clamp(2rem, 3.5vw, 3rem); margin-bottom: 0; }
 
+    .sn-hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
     .intro-text {
       font-size: 1.02rem;
       color: var(--ink-soft);
@@ -508,6 +558,44 @@
       background: var(--bg);
     }
     .links-row { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
+    .install-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 3rem 2rem;
+    }
+    .install-panel {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 3rem 4rem;
+    }
+    .install-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 2rem;
+      align-items: start;
+    }
+    .install-card {
+      border: 1px solid var(--rule);
+      background: var(--white);
+      padding: 2rem;
+    }
+    .install-card h2 {
+      font-size: clamp(1.5rem, 2.4vw, 2rem);
+      margin-bottom: 1rem;
+    }
+    .install-card p {
+      color: var(--ink-soft);
+      line-height: 1.8;
+    }
+    .install-card .demo-video {
+      margin-top: 1.25rem;
+    }
+    .install-steps {
+      margin: 1.25rem 0 0 1.2rem;
+      color: var(--ink-soft);
+      line-height: 1.75;
+    }
+    .install-steps li + li { margin-top: 0.6rem; }
     .alpha-release {
       max-width: 1100px;
       margin: 0 auto;
@@ -729,16 +817,22 @@
 
     @media (max-width: 768px) {
       nav { padding: 0 1.5rem; }
+      .nav-logo { display: none; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 0.75rem; }
+      .nav-links a, .nav-dropdown-trigger { font-size: 0.64rem; }
+      .nav-dropdown { height: 60px; }
+      .nav-dropdown-menu { left: 0; transform: none; min-width: 140px; }
       .hero { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
       .hero-right { display: none; }
       .two-col { grid-template-columns: 1fr; }
       .pillars { grid-template-columns: 1fr; }
       .tech-grid { grid-template-columns: 1fr; }
+      .install-grid { grid-template-columns: 1fr; }
       .sn-title { align-items: flex-start; }
       .sn-logo { width: 60px; height: 60px; border-radius: 15px; }
       .team-grid { grid-template-columns: repeat(2, 1fr); }
       .team-grid.small { grid-template-columns: repeat(3, 1fr); }
-      .section, .demo-section, .sn-hero, .alpha-release, .team-hero, .team-section, .taxonomy-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .section, .demo-section, .sn-hero, .install-hero, .install-panel, .alpha-release, .team-hero, .team-section, .taxonomy-section { padding-left: 1.5rem; padding-right: 1.5rem; }
       .demo-img { flex-basis: 100%; }
       .alpha-form-grid { grid-template-columns: 1fr; }
     }
@@ -750,11 +844,16 @@
   <span class="nav-logo" onclick="show('home')"><span>○</span> Open-Reflection</span>
   <ul class="nav-links">
     <li><a onclick="show('home')" class="active" id="nav-home">Home</a></li>
-    <li><a onclick="show('nudges')" id="nav-nudges">Safety Nudges</a></li>
+    <li class="nav-dropdown">
+      <button class="nav-dropdown-trigger" type="button" onclick="show('nudges')" id="nav-safety">Safety Nudges</button>
+      <div class="nav-dropdown-menu" aria-label="Safety Nudges pages">
+        <a onclick="show('nudges')" id="nav-nudges">About</a>
+        <a onclick="show('install')" id="nav-install">Install</a>
+      </div>
+    </li>
     <li><a onclick="show('team')" id="nav-team">Team</a></li>
     <li class="nav-divider nav-external" aria-hidden="true"></li>
     <li class="nav-external"><a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a></li>
-    <li class="nav-external"><a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Install</a></li>
     <li class="nav-external"><a href="mailto:[CONTACT EMAIL]">Contact</a></li>
   </ul>
 </nav>
@@ -837,7 +936,7 @@
     </div>
   </section>
 
-  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a onclick="show('install')" href="#install">How to Install</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
 </div>
 
 <!-- SAFETY NUDGES -->
@@ -850,6 +949,10 @@
     <div class="sn-title">
       <img class="sn-logo" src="assets/safety_nudges.png" alt="Safety Nudges logo">
       <h1>Safety <em>Nudges</em></h1>
+    </div>
+    <div class="sn-hero-actions">
+      <button class="btn filled" onclick="show('install')">How to Install →</button>
+      <a class="btn" href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub Repository →</a>
     </div>
   </div>
 
@@ -878,55 +981,6 @@
         <button class="demo-control" type="button" id="demo-next" aria-label="Next demo">›</button>
       </div>
     </div>
-
-    <video class="demo-video" controls playsinline preload="metadata">
-      <source src="assets/demo-video.mp4" type="video/mp4">
-      <source src="assets/demo-video.mov" type="video/quicktime">
-      Your browser does not support the demo video.
-    </video>
-
-    <div class="links-row" style="margin-top:1.5rem;">
-      <a class="btn filled" href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub Repository →</a>
-      <a class="btn" href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension →</a>
-    </div>
-  </div>
-
-  <div class="alpha-release" id="alpha-release">
-    <div class="section-label">Alpha Release</div>
-    <p class="intro-text">
-      The alpha version of Safety Nudges is now available on the Chrome Web Store. We are inviting users to sign up with the form below to receive an activation code by email, which allows free Safety Nudges usage up to $5 in LLM provider credits. We strongly encourage users to submit feedback using the in-app form so we can continue to improve Safety Nudges!
-    </p>
-
-    <form class="alpha-form" id="alpha-signup-form" novalidate>
-      <div class="alpha-form-grid">
-        <div class="alpha-field">
-          <label for="alpha-first-name">First Name</label>
-          <input id="alpha-first-name" name="firstName" type="text" autocomplete="given-name" required maxlength="80">
-        </div>
-        <div class="alpha-field">
-          <label for="alpha-last-name">Last Name</label>
-          <input id="alpha-last-name" name="lastName" type="text" autocomplete="family-name" required maxlength="80">
-        </div>
-        <div class="alpha-field full">
-          <label for="alpha-company">Company/Organization</label>
-          <input id="alpha-company" name="company" type="text" autocomplete="organization" required maxlength="120">
-        </div>
-        <div class="alpha-field full">
-          <label for="alpha-email">Email Address</label>
-          <input id="alpha-email" name="email" type="email" autocomplete="email" required maxlength="254">
-        </div>
-      </div>
-      <div class="alpha-honeypot" aria-hidden="true">
-        <label for="alpha-website">Website</label>
-        <input id="alpha-website" name="website" type="text" tabindex="-1" autocomplete="off">
-      </div>
-      <input id="alpha-loaded-at" name="loadedAt" type="hidden">
-      <div class="alpha-turnstile" id="alpha-turnstile"></div>
-      <div class="alpha-form-footer">
-        <button class="btn filled" type="submit" id="alpha-submit">Send Activation Code</button>
-        <div class="alpha-status" id="alpha-status" role="status" aria-live="polite"></div>
-      </div>
-    </form>
   </div>
 
   <div class="demo-section" style="padding-top:1rem;">
@@ -1308,6 +1362,90 @@
     </div>
   </div>
 
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a onclick="show('install')" href="#install">How to Install</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
+</div>
+
+<!-- INSTALL -->
+<div class="tab" id="tab-install">
+  <div class="install-hero">
+    <div style="font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;">
+      <span style="display:inline-block;width:28px;height:1px;background:var(--accent);"></span>
+      Safety Nudges
+    </div>
+    <h1>How to <em>Install</em></h1>
+    <p class="intro-text">
+      Install Safety Nudges from the Chrome Web Store, then request an activation code for alpha access. The activation code enables free usage up to $5 in LLM provider credits.
+    </p>
+  </div>
+
+  <div class="install-panel">
+    <div class="section-label">Install Safety Nudges</div>
+    <div class="install-grid">
+      <div class="install-card">
+        <h2>Instructions</h2>
+        <p>
+          The alpha version of Safety Nudges is available on the Chrome Web Store. After installing the extension, use the form below to receive an activation code by email.
+        </p>
+        <ol class="install-steps">
+          <li>Install Safety Nudges from the Chrome Web Store.</li>
+          <li>Request an activation code using the form below.</li>
+          <li>Enter the activation code in the extension to enable alpha access.</li>
+        </ol>
+        <div class="links-row">
+          <a class="btn filled" href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Install from Chrome Web Store →</a>
+          <a class="btn" href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub Repository →</a>
+        </div>
+      </div>
+      <div class="install-card">
+        <h2>Demo Video</h2>
+        <p>The video below shows how to install Safety Nudges and enter your activation code.</p>
+        <video class="demo-video" controls playsinline preload="none" poster="assets/screenshot1.png">
+          <source src="assets/demo-video.mp4" type="video/mp4">
+          <source src="assets/demo-video.mov" type="video/quicktime">
+          Your browser does not support the demo video.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <div class="alpha-release" id="alpha-release">
+    <div class="section-label">Activation Code</div>
+    <p class="intro-text">
+      The alpha version of Safety Nudges is now available on the Chrome Web Store. We are inviting users to sign up with the form below to receive an activation code by email, which allows free Safety Nudges usage up to $5 in LLM provider credits. We strongly encourage users to submit feedback using the in-app form so we can continue to improve Safety Nudges!
+    </p>
+
+    <form class="alpha-form" id="alpha-signup-form" novalidate>
+      <div class="alpha-form-grid">
+        <div class="alpha-field">
+          <label for="alpha-first-name">First Name</label>
+          <input id="alpha-first-name" name="firstName" type="text" autocomplete="given-name" required maxlength="80">
+        </div>
+        <div class="alpha-field">
+          <label for="alpha-last-name">Last Name</label>
+          <input id="alpha-last-name" name="lastName" type="text" autocomplete="family-name" required maxlength="80">
+        </div>
+        <div class="alpha-field full">
+          <label for="alpha-company">Company/Organization</label>
+          <input id="alpha-company" name="company" type="text" autocomplete="organization" required maxlength="120">
+        </div>
+        <div class="alpha-field full">
+          <label for="alpha-email">Email Address</label>
+          <input id="alpha-email" name="email" type="email" autocomplete="email" required maxlength="254">
+        </div>
+      </div>
+      <div class="alpha-honeypot" aria-hidden="true">
+        <label for="alpha-website">Website</label>
+        <input id="alpha-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <input id="alpha-loaded-at" name="loadedAt" type="hidden">
+      <div class="alpha-turnstile" id="alpha-turnstile"></div>
+      <div class="alpha-form-footer">
+        <button class="btn filled" type="submit" id="alpha-submit">Send Activation Code</button>
+        <div class="alpha-status" id="alpha-status" role="status" aria-live="polite"></div>
+      </div>
+    </form>
+  </div>
+
   <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
 </div>
 
@@ -1387,7 +1525,7 @@
     </div>
   </div>
 
-  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a href="https://chromewebstore.google.com/detail/safety-nudges/hbllljbafenpnhjbljhhpjfdgpookenc" target="_blank" rel="noreferrer">Chrome Extension</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
+  <footer>© 2025 The Open-Reflection Project &nbsp;·&nbsp; <a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a> &nbsp;·&nbsp; <a onclick="show('install')" href="#install">How to Install</a> &nbsp;·&nbsp; <a href="mailto:[CONTACT EMAIL]">Contact</a></footer>
 </div>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
@@ -1403,12 +1541,23 @@
 
 <script src="config.js"></script>
 <script>
+  const tabNames = ['home', 'nudges', 'install', 'team'];
+
   function show(tab) {
+    if (!tabNames.includes(tab)) return;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.querySelectorAll('.nav-links a, .nav-dropdown-trigger').forEach(a => a.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('nav-' + tab).classList.add('active');
+    if (tab === 'nudges' || tab === 'install') {
+      document.getElementById('nav-safety').classList.add('active');
+    }
     window.scrollTo(0, 0);
+  }
+
+  const initialTab = window.location.hash.replace('#', '');
+  if (tabNames.includes(initialTab)) {
+    show(initialTab);
   }
 
   const lightbox = document.getElementById('lightbox');
