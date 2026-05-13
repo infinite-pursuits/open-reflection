@@ -853,6 +853,7 @@
     </li>
     <li><a onclick="show('team')" id="nav-team">Team</a></li>
     <li class="nav-divider nav-external" aria-hidden="true"></li>
+    <li class="nav-external"><a onclick="show('install')" href="#install" data-nav-tab="install">Install</a></li>
     <li class="nav-external"><a href="https://github.com/jtbwedgwood/safety-nudges" target="_blank" rel="noreferrer">GitHub</a></li>
     <li class="nav-external"><a href="mailto:[CONTACT EMAIL]">Contact</a></li>
   </ul>
@@ -1549,6 +1550,7 @@
     document.querySelectorAll('.nav-links a, .nav-dropdown-trigger').forEach(a => a.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('nav-' + tab).classList.add('active');
+    document.querySelectorAll(`[data-nav-tab="${tab}"]`).forEach(a => a.classList.add('active'));
     if (tab === 'nudges' || tab === 'install') {
       document.getElementById('nav-safety').classList.add('active');
     }
